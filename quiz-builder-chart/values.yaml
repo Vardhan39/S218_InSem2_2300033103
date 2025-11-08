@@ -1,0 +1,68 @@
+serviceAccount:
+  create: false
+  automount: true
+  name: ""
+
+frontend:
+  name: quiz-frontend
+  replicaCount: 2
+  image:
+    repository: quiz-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    hosts:
+      - host: quiz.local
+        paths:
+          - path: /
+            pathType: Prefix
+
+backend:
+  name: quiz-backend
+  replicaCount: 2
+  image:
+    repository: quiz-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5000
+  ingress:
+    enabled: true
+    hosts:
+      - host: quiz.local
+        paths:
+          - path: /api
+            pathType: Prefix
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+# HPA-specific (chart-driven) settings
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
