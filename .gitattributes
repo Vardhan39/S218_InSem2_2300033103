@@ -1,0 +1,6 @@
+# Enforce LF for all text files in the repo
+* text=auto
+
+# Ensure Helm templates keep LF
+quiz-builder-chart/* text eol=lf
+quiz-builder-chart/templates/* text eol=lf
